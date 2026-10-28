@@ -9,7 +9,7 @@ const MyBookingsPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
   const token = await getTokenFromServer();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL 
   const res = await fetch(
     `${apiUrl}/my-bookings/${user?.email}`,
     {
