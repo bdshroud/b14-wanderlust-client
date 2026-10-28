@@ -8,12 +8,17 @@ import { getTokenFromServer } from "@/lib/getTokenFromServer";
 const MyBookingsPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
-  const token = await getTokenFromServer()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${user?.email}`, {
-    headers: {
-      authorization: `Bearer ${token}`,
-    }
-  });
+  const token = await getTokenFromServer();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const res = await fetch(
+    `${apiUrl}/my-bookings/${user?.email}`,
+    {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    },
+  );
   const bookings: IBooking[] = await res.json();
 
 

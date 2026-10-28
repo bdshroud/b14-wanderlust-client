@@ -61,8 +61,8 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#0d0d0d] px-6 pt-16 pb-8 text-white">
-      <div className="mx-auto max-w-7xl">
+    <footer className="w-full bg-[#0d0d0d] px-6 pt-16 pb-8 text-white" suppressHydrationWarning>
+      <div className="mx-auto max-w-7xl" suppressHydrationWarning>
         {/* Brand */}
         <p className="text-6xl font-bold tracking-tight md:text-7xl">
           Wanderlast

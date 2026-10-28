@@ -4,8 +4,9 @@ import { DestinationsGrid } from "@/components/destination/destinations-grid";
 import type { IDestination } from "@/lib/types/destinations";
 
 async function Destinations() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destinations`, {
-    cache: 'no-store'
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const res = await fetch(`${apiUrl}/destinations`, {
+    cache: "no-store",
   });
   const data: IDestination[] = await res.json();
 

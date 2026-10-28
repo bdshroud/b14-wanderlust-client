@@ -1,31 +1,30 @@
 # AGENTS.md
 
-Single-package Next.js 16 (App Router) app. Not a monorepo — no workspace config, no test suite, no CI.
+Single-package Next.js 16.4.2 (App Router). Not a monorepo — no workspace config, no test suite, no CI.
 
 ## Commands
 
-- Dev server: `npm run dev` (Turbopack)
-- Lint: `npm run lint` — **currently fails on pre-existing errors** in generated shadcn code (`src/components/ui/carousel.tsx`, `src/hooks/use-mobile.ts`, rule `react-hooks/set-state-in-effect`) plus an unused `Image` import warning in `src/app/page.tsx`. Don't assume you broke it; only fix them if asked.
-- Typecheck: no script exists — run `npx tsc --noEmit` (passes on a clean tree).
-- No test runner is configured. Don't invent `npm test`.
-- Verification order when changing code: `npx tsc --noEmit` → `npm run lint` → `npm run build`.
+- Dev: `npm run dev` (Next dev)
+- Build: `npm run build`
+- Start: `npm run start`
+- Lint: `npm run lint` (ESLint 9, flat config via `eslint-config-next`)
+- Typecheck: no script — run `npx tsc --noEmit` (passes currently)
+- Verify: `npx tsc --noEmit` → `npm run lint` → `npm run build`
+- No test runner configured; don't invent `npm test`.
 
 ## Architecture
 
-- App Router lives entirely under `src/app/` (`page.tsx` is the homepage; `layout.tsx` sets the root layout and metadata). UI code is `src/components/`, hooks in `src/hooks/`, helpers in `src/lib/`.
-- Path alias: `@/*` → `./src/*` (tsconfig `paths`).
-- `next.config.ts` enables `cacheComponents`, `partialPrefetching`, and `reactCompiler` (Babel React Compiler). `cacheComponents: true` changes caching/Dynamic IO semantics — check the Next 16 docs before assuming fetch/`use cache` behavior.
+- App Router under `src/app/` (`page.tsx`, `layout.tsx`). UI in `src/components/`, hooks in `src/hooks/`, helpers in `src/lib/`. `src/proxy.ts` exists (proxy entry).
+- Path alias: `@/*` → `./src/*`.
+- `next.config.ts`: `cacheComponents: false`, `partialPrefetching: false`, `reactCompiler: true` (Babel React Compiler), `images.remotePatterns` allows `https://**`, Turbopack CSS rule for `@tailwindcss/turbopack`.
+- Auth: `better-auth` + `@better-auth/mongo-adapter` + `mongodb` present (expect auth-related setup; look in `src/app/` or lib before assuming).
 
-## shadcn / UI conventions
+## shadcn / UI
 
-- shadcn is configured via `components.json`: style `base-nova`, **primitives are `@base-ui/react`, not Radix** — don't swap in Radix imports.
-- Add components with `npx shadcn add <name>`; hand-editing generated files under `src/components/ui/` will be overwritten.
-- `cn` is imported from the `cn` package directly (`import { cn } from "cn"`); `src/lib/utils.ts` only re-exports it. Follow whichever pattern neighboring files use.
-- Tailwind v4 (CSS-first, no `tailwind.config`); theme tokens are in `src/app/globals.css`. New colors/styles go there, not in a config file.
-
-## Git
-
-- Tree is currently dirty (new `src/components/`, `src/hooks/`, `src/lib/` untracked; `package.json`/`src/app/*` modified). Commit the `AGENTS.md` marker block below with your work rather than deleting it.
+- Config `components.json`: style `base-nova`, RSC/TSX, Tailwind v4 (CSS-first, no `tailwind.config`), base color `neutral`, CSS variables enabled, icon library `lucide`. **Primitives: `@base-ui/react` (not Radix)** — don't swap imports.
+- Add: `npx shadcn add <name>`. Don't hand-edit generated files under `src/components/ui/` (overwritten on add/update).
+- `cn` imported directly as `import { cn } from "cn"` (package). `src/lib/utils.ts` only re-exports it — follow neighboring files.
+- Theme tokens in `src/app/globals.css`. Add new styles/tokens there.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
